@@ -9,6 +9,7 @@ const app = require("../app.js");
 const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data/");
 const db = require("../db/connection.js");
+const endpointFile = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(data);
@@ -148,15 +149,47 @@ describe("GET /api", () => {
       .expect(200)
       .then((response) => {
         const data = response.body;
-        const output = {
-          "GET /api":
-            '{"description":"serves up a json representation of all the available endpoints of the api"}',
-          "GET /api/topics":
-            '{"description":"serves an array of all topics","queries":[],"exampleResponse":{"topics":[{"slug":"football","description":"Footie!"}]}}',
-          "GET /api/articles":
-            '{"description":"serves an array of all articles","queries":["author","topic","sort_by","order"],"exampleResponse":{"articles":[{"title":"Seafood substitutions are increasing","topic":"cooking","author":"weegembump","body":"Text from the article..","created_at":"2018-05-30T15:59:13.341Z","votes":0,"comment_count":6}]}}',
-        };
-        expect(data).toEqual(output);
+        expect(data).toEqual(endpointFile);
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
+  test("Should return the correct article information when passed an article id", () => {
+    return request(app)
+      .get("/api/articles/4")
+      .expect(200)
+      .then((response) => {
+        const data = response.body.articleData;
+        expect(data.article_id).toBe(4);
+        expect(data.hasOwnProperty("article_id")).toBe(true);
+        expect(data.hasOwnProperty("title")).toBe(true);
+        expect(data.hasOwnProperty("topic")).toBe(true);
+        expect(data.hasOwnProperty("author")).toBe(true);
+        expect(data.hasOwnProperty("body")).toBe(true);
+        expect(data.hasOwnProperty("created_at")).toBe(true);
+        expect(data.hasOwnProperty("votes")).toBe(true);
+        expect(data.hasOwnProperty("article_img_url")).toBe(true);
+      });
+  });
+
+  test("Should respond with a 404 not found error when given an id that does not exist ", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then((response) => {
+        const message = response.body.msg;
+        expect(message).toBe("article not found");
+      });
+  });
+
+  test("Should return a 400 bad request if given an invalid id type ", () => {
+    return request(app)
+      .get("/api/articles/notanumber")
+      .expect(400)
+      .then((response) => {
+        const message = response.body.msg;
+        expect(message).toBe("bad request");
       });
   });
 });

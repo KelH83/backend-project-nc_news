@@ -12,11 +12,9 @@ function getAllTopics(req, res, next) {
 }
 
 function getEndpoints(req, res, next) {
-  const endpointsObj = {};
-  for (const keys in endpointFile) {
-    endpointsObj[keys] = JSON.stringify(endpointFile[keys]);
-  }
-  res.status(200).send(endpointsObj)
+  res
+    .status(200)
+    .send(endpointFile)
 
     .catch((err) => {
       next(err);
