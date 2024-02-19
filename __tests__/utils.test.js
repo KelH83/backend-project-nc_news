@@ -4,19 +4,19 @@ const {
   formatComments,
 } = require("../db/seeds/utils");
 
-const request = require('supertest')
-const app = require('../app.js')
-const seed = require('../db/seeds/seed.js')
-const data = require('../db/data/test-data/')
-const db = require('../db/connection.js')
+const request = require("supertest");
+const app = require("../app.js");
+const seed = require("../db/seeds/seed.js");
+const data = require("../db/data/test-data/");
+const db = require("../db/connection.js");
 
 beforeEach(() => {
-  return seed(data)
-})
+  return seed(data);
+});
 
 afterAll(() => {
-  db.end()
-})
+  db.end();
+});
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -117,26 +117,46 @@ describe("formatComments", () => {
   });
 });
 
-describe('GET api/topics', () => {
-  test('Should return an array of all topics', () => {
+describe("GET api/topics", () => {
+  test("Should return an array of all topics", () => {
     return request(app)
-    .get('/api/topics')
-    .expect(200)
-    .then((response) => {
-      const data = response.body
-      expect(data.length).toBe(3)
-      data.forEach((item) => {
-        expect(item.hasOwnProperty('description')).toBe(true)
-        expect(item.hasOwnProperty('slug')).toBe(true)
-      })
-    })
+      .get("/api/topics")
+      .expect(200)
+      .then((response) => {
+        const data = response.body;
+        expect(data.length).toBe(3);
+        data.forEach((item) => {
+          expect(item.hasOwnProperty("description")).toBe(true);
+          expect(item.hasOwnProperty("slug")).toBe(true);
+        });
+      });
   });
-  test('Should return a path not found when given an incorrect endpoint', () => {
+  test("Should return a path not found when given an incorrect endpoint", () => {
     return request(app)
-    .get('/api/wrongpath')
-    .expect(404)
-    .then((response) => {
-      expect(response.body.msg).toBe('path not found')
-    })
+      .get("/api/wrongpath")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("path not found");
+      });
+  });
+});
+
+describe("GET /api", () => {
+  test("Should return an object of all of the available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((response) => {
+        const data = response.body;
+        const output = {
+          "GET /api":
+            '{"description":"serves up a json representation of all the available endpoints of the api"}',
+          "GET /api/topics":
+            '{"description":"serves an array of all topics","queries":[],"exampleResponse":{"topics":[{"slug":"football","description":"Footie!"}]}}',
+          "GET /api/articles":
+            '{"description":"serves an array of all articles","queries":["author","topic","sort_by","order"],"exampleResponse":{"articles":[{"title":"Seafood substitutions are increasing","topic":"cooking","author":"weegembump","body":"Text from the article..","created_at":"2018-05-30T15:59:13.341Z","votes":0,"comment_count":6}]}}',
+        };
+        expect(data).toEqual(output);
+      });
   });
 });
