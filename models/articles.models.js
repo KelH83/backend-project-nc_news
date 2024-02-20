@@ -36,9 +36,22 @@ function selectAllArticles(sort_by = "created_at", order = "DESC") {
   }
 }
 
-function selectCommentCount() {
-  return db.query(`SELECT article_id, COUNT(comment_id) from comments 
-  GROUP BY article_id`);
+function selectCommentsByArticleId(articleId) {
+  const queryString = `SELECT * FROM comments`;
+  const articleSelection = ` WHERE article_id = $1`;
+
+  return db
+    .query(`${queryString}${articleSelection};`, [articleId])
+    .then((comments) => {
+      return comments.rows;
+    })
+    .catch((err) => {
+      next(err);
+    });
 }
 
-module.exports = { selectArticleById, selectAllArticles, selectCommentCount };
+module.exports = {
+  selectArticleById,
+  selectAllArticles,
+  selectCommentsByArticleId,
+};

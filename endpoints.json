@@ -38,5 +38,26 @@
       "votes": 0,
       "comment_count": 6
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of object(s) of all of the comment data relating to that article id",
+    "exampleResponse": [
+      {
+        "comment_id": 10,
+        "body": "git push origin master",
+        "votes": 0,
+        "author": "icellusedkars",
+        "article_id": 3,
+        "created_at": 1592641440000
+      },
+      {
+        "comment_id": 11,
+        "body": "Ambidextrous marsupial",
+        "votes": 0,
+        "author": "icellusedkars",
+        "article_id": 3,
+        "created_at": 1600560600000
+      }
+    ]
   }
 }
