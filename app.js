@@ -1,11 +1,20 @@
 const express = require("express");
 const app = express();
-app.use(express.json());
 const {
   getAllTopics,
   getEndpoints,
 } = require("./controllers/topics.controllers");
-const { getArticleById } = require("./controllers/articles.controllers");
+const {
+  getArticleById,
+  getAllArticles,
+} = require("./controllers/articles.controllers");
+
+const {
+  customErrors,
+  psqlErrors,
+  serverErrors,
+  invalidEndpoints,
+} = require("./controllers/errors.controllers");
 
 app.get("/api/topics", getAllTopics);
 
@@ -13,25 +22,12 @@ app.get("/api", getEndpoints);
 
 app.get("/api/articles/:article_id", getArticleById);
 
-app.all("/*", (req, res, next) => {
-  res.status(404).send({ msg: "path not found" });
-});
+app.get("/api/articles", getAllArticles);
 
-app.use((err, req, res, next) => {
-  if (err.status) {
-    res.status(err.status).send({ msg: err.msg });
-  } else next(err);
-});
+app.all("/*", invalidEndpoints);
 
-app.use((err, req, res, next) => {
-  if ((err.code = "22P02")) {
-    res.status(400).send({ msg: "bad request" });
-  }
-  next(err);
-});
-
-app.use((err, req, res, next) => {
-  res.status(500).send({ msg: "Internal server error" });
-});
+app.use(customErrors);
+app.use(psqlErrors);
+app.use(serverErrors);
 
 module.exports = app;
