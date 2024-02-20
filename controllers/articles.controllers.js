@@ -1,7 +1,7 @@
 const {
   selectArticleById,
   selectAllArticles,
-  selectCommentCount,
+  selectCommentsByArticleId,
 } = require("../models/articles.models");
 
 function getArticleById(req, res, next) {
@@ -26,4 +26,20 @@ function getAllArticles(req, res, next) {
     });
 }
 
-module.exports = { getArticleById, getAllArticles };
+function getAllCommentsByArticleId(req, res, next) {
+  articleId = req.params.article_id;
+  const promises = [
+    selectCommentsByArticleId(articleId),
+    selectArticleById(articleId),
+  ];
+
+  Promise.all(promises)
+    .then((promiseResolutions) => {
+      res.status(200).send({ comments: promiseResolutions[0] });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+module.exports = { getArticleById, getAllArticles, getAllCommentsByArticleId };

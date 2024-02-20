@@ -249,3 +249,58 @@ describe("GET /api/articles", () => {
       });
   });
 });
+
+describe("Get /api/articles/:article_id/comments", () => {
+  test("Should return the comments from a specific article id", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((response) => {
+        const data = response.body.comments;
+        expect(data.length).toBe(2);
+        data.forEach((comment) => {
+          expect(comment.article_id).toBe(3);
+        });
+      });
+  });
+
+  test("Should return the comments from a specific article id in descending order", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((response) => {
+        const data = response.body.comments;
+        expect(data).toBeSorted({ descending: true });
+      });
+  });
+
+  test("Should return an empty array when given a valid article id but there are no comments", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then((response) => {
+        const data = response.body.comments;
+        expect(data.length).toBe(0);
+      });
+  });
+
+  test("Should return a 404 not found if passed an id that does not exist", () => {
+    return request(app)
+      .get("/api/articles/99/comments")
+      .expect(404)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("article not found");
+      });
+  });
+
+  test("Should return a 400 bad request if passed an invalid id", () => {
+    return request(app)
+      .get("/api/articles/Twyla/comments")
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+});

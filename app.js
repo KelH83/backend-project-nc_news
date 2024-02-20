@@ -7,6 +7,7 @@ const {
 const {
   getArticleById,
   getAllArticles,
+  getAllCommentsByArticleId,
 } = require("./controllers/articles.controllers");
 
 const {
@@ -23,6 +24,8 @@ app.get("/api", getEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles", getAllArticles);
+
+app.get("/api/articles/:article_id/comments", getAllCommentsByArticleId);
 
 app.all("/*", invalidEndpoints);
 
