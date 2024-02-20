@@ -10,6 +10,7 @@ const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data/");
 const db = require("../db/connection.js");
 const endpointFile = require("../endpoints.json");
+const sorted = require("jest-sorted");
 
 beforeEach(() => {
   return seed(data);
@@ -160,16 +161,20 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/4")
       .expect(200)
       .then((response) => {
-        const data = response.body.articleData;
+        const data = response.body.article;
+        const article4 = {
+          article_id: 4,
+          title: "Student SUES Mitch!",
+          topic: "mitch",
+          author: "rogersop",
+          body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+          created_at: "2020-05-06T01:14:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
         expect(data.article_id).toBe(4);
-        expect(data.hasOwnProperty("article_id")).toBe(true);
-        expect(data.hasOwnProperty("title")).toBe(true);
-        expect(data.hasOwnProperty("topic")).toBe(true);
-        expect(data.hasOwnProperty("author")).toBe(true);
-        expect(data.hasOwnProperty("body")).toBe(true);
-        expect(data.hasOwnProperty("created_at")).toBe(true);
-        expect(data.hasOwnProperty("votes")).toBe(true);
-        expect(data.hasOwnProperty("article_img_url")).toBe(true);
+        expect(data).toEqual(article4);
       });
   });
 
@@ -190,6 +195,57 @@ describe("GET /api/articles/:article_id", () => {
       .then((response) => {
         const message = response.body.msg;
         expect(message).toBe("bad request");
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test("Should return an array with all of the articles including comment count", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const data = response.body;
+        expect(data.length).toBe(13);
+        data.forEach((article) => {
+          expect(article.hasOwnProperty("article_id")).toBe(true);
+          expect(article.hasOwnProperty("title")).toBe(true);
+          expect(article.hasOwnProperty("topic")).toBe(true);
+          expect(article.hasOwnProperty("author")).toBe(true);
+          expect(article.hasOwnProperty("body")).toBe(false);
+          expect(article.hasOwnProperty("votes")).toBe(true);
+          expect(article.hasOwnProperty("created_at")).toBe(true);
+          expect(article.hasOwnProperty("article_img_url")).toBe(true);
+          expect(article.hasOwnProperty("comment_count")).toBe(true);
+        });
+      });
+  });
+  test("Should return the articles array sorted by default into descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const data = response.body;
+        expect(data).toBeSorted({ descending: true });
+      });
+  });
+  test("Should return a 400 bad requets error when given an invalid sort_by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=Kimiko")
+      .expect(400)
+      .then((response) => {
+        const msg = response.body.msg;
+        expect(msg).toBe("bad request");
+      });
+  });
+
+  test("Should return a 400 bad request error when given an invalid order_by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&&order=Kiyomi")
+      .expect(400)
+      .then((response) => {
+        const msg = response.body.msg;
+        expect(msg).toBe("bad request");
       });
   });
 });
