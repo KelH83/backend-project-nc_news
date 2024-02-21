@@ -229,7 +229,7 @@ describe("GET /api/articles", () => {
         expect(data).toBeSorted({ descending: true });
       });
   });
-  test("Should return a 400 bad requets error when given an invalid sort_by", () => {
+  test("Should return a 400 bad request error when given an invalid sort_by", () => {
     return request(app)
       .get("/api/articles?sort_by=Kimiko")
       .expect(400)
@@ -297,6 +297,66 @@ describe("Get /api/articles/:article_id/comments", () => {
   test("Should return a 400 bad request if passed an invalid id", () => {
     return request(app)
       .get("/api/articles/Twyla/comments")
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("Should insert the new comment into the database and return the updated information", () => {
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send({
+        username: "butter_bridge",
+        body: "Have you ever seen a Lavender corn snake?",
+      })
+      .expect(201)
+      .then((response) => {
+        const data = response.body.returnedComment[0];
+        expect(data.author).toEqual("butter_bridge");
+        expect(data.article_id).toEqual(2);
+        expect(data.body).toEqual("Have you ever seen a Lavender corn snake?");
+      });
+  });
+  test("Should return a 400 bad request if given an article_id that does not exist", () => {
+    return request(app)
+      .post("/api/articles/99/comments")
+      .send({
+        username: "butter_bridge",
+        body: "Have you ever seen a Lavender corn snake?",
+      })
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+
+  test("Should return a 400 error when not given all of the not null i.e required entry fields", () => {
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send({
+        body: "Have you ever seen a Lavender corn snake?",
+      })
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe(
+          "missing data: comment must contain a username & comment"
+        );
+      });
+  });
+
+  test("Should return a 400 error when given a username that does not exist", () => {
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send({
+        username: "Yuki",
+        body: "Have you ever seen a Lavender corn snake?",
+      })
       .expect(400)
       .then((response) => {
         const data = response.body.msg;

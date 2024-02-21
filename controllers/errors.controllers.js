@@ -9,8 +9,17 @@ exports.customErrors = (err, req, res, next) => {
 };
 
 exports.psqlErrors = (err, req, res, next) => {
-  if ((err.code = "22P02")) {
+  if (
+    err.code === "22P02" ||
+    err.code === "42601" ||
+    err.code === "42703" ||
+    err.code === "23503"
+  ) {
     res.status(400).send({ msg: "bad request" });
+  } else if (err.code === "23502") {
+    res
+      .status(400)
+      .send({ msg: "missing data: comment must contain a username & comment" });
   }
   next(err);
 };

@@ -44,14 +44,28 @@ function selectCommentsByArticleId(articleId) {
     .query(`${queryString}${articleSelection};`, [articleId])
     .then((comments) => {
       return comments.rows;
-    })
-    .catch((err) => {
-      next(err);
     });
+}
+
+function addNewComment(newComment, articleId) {
+  const commentToAdd = [newComment.username, +articleId, newComment.body];
+  const queryString = format(
+    `INSERT INTO comments
+    (author, article_id, body) 
+    VALUES 
+    %L
+    RETURNING *;`,
+    [commentToAdd]
+  );
+
+  return db.query(queryString).then((returnedComment) => {
+    return returnedComment.rows;
+  });
 }
 
 module.exports = {
   selectArticleById,
   selectAllArticles,
   selectCommentsByArticleId,
+  addNewComment,
 };

@@ -2,6 +2,7 @@ const {
   selectArticleById,
   selectAllArticles,
   selectCommentsByArticleId,
+  addNewComment,
 } = require("../models/articles.models");
 
 function getArticleById(req, res, next) {
@@ -42,4 +43,21 @@ function getAllCommentsByArticleId(req, res, next) {
     });
 }
 
-module.exports = { getArticleById, getAllArticles, getAllCommentsByArticleId };
+function postNewCommentByArticleId(req, res, next) {
+  const articleId = req.params.article_id;
+  const newComment = req.body;
+  addNewComment(newComment, articleId)
+    .then((returnedComment) => {
+      res.status(201).send({ returnedComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+module.exports = {
+  getArticleById,
+  getAllArticles,
+  getAllCommentsByArticleId,
+  postNewCommentByArticleId,
+};
