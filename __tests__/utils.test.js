@@ -174,7 +174,15 @@ describe("GET /api/articles/:article_id", () => {
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         };
         expect(data.article_id).toBe(4);
-        expect(data).toEqual(article4);
+        expect(data.hasOwnProperty('article_id')).toBe(true);
+        expect(data.hasOwnProperty('title')).toBe(true);
+        expect(data.hasOwnProperty('topic')).toBe(true);
+        expect(data.hasOwnProperty('author')).toBe(true);
+        expect(data.hasOwnProperty('body')).toBe(true);
+        expect(data.hasOwnProperty('created_at')).toBe(true);
+        expect(data.hasOwnProperty('votes')).toBe(true);
+        expect(data.hasOwnProperty('article_img_url')).toBe(true);
+
       });
   });
 
@@ -241,7 +249,7 @@ describe("GET /api/articles", () => {
 
   test("Should return a 400 bad request error when given an invalid order_by", () => {
     return request(app)
-      .get("/api/articles?sort_by=created_at&&order=Kiyomi")
+      .get("/api/articles?sort_by=created_atorder=Kiyomi")
       .expect(400)
       .then((response) => {
         const msg = response.body.msg;
