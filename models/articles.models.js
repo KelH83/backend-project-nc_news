@@ -63,9 +63,23 @@ function addNewComment(newComment, articleId) {
   });
 }
 
+function updateArticle(articleId, newUpdate) {
+  const votes = newUpdate.inc_votes;
+  const queryString = `
+  UPDATE articles
+  SET votes = votes + $1
+  WHERE article_id = $2
+  RETURNING *;`;
+
+  return db.query(queryString, [votes, articleId]).then((updatedArticle) => {
+    return updatedArticle.rows;
+  });
+}
+
 module.exports = {
   selectArticleById,
   selectAllArticles,
   selectCommentsByArticleId,
   addNewComment,
+  updateArticle,
 };

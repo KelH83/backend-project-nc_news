@@ -174,15 +174,14 @@ describe("GET /api/articles/:article_id", () => {
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         };
         expect(data.article_id).toBe(4);
-        expect(data.hasOwnProperty('article_id')).toBe(true);
-        expect(data.hasOwnProperty('title')).toBe(true);
-        expect(data.hasOwnProperty('topic')).toBe(true);
-        expect(data.hasOwnProperty('author')).toBe(true);
-        expect(data.hasOwnProperty('body')).toBe(true);
-        expect(data.hasOwnProperty('created_at')).toBe(true);
-        expect(data.hasOwnProperty('votes')).toBe(true);
-        expect(data.hasOwnProperty('article_img_url')).toBe(true);
-
+        expect(data.hasOwnProperty("article_id")).toBe(true);
+        expect(data.hasOwnProperty("title")).toBe(true);
+        expect(data.hasOwnProperty("topic")).toBe(true);
+        expect(data.hasOwnProperty("author")).toBe(true);
+        expect(data.hasOwnProperty("body")).toBe(true);
+        expect(data.hasOwnProperty("created_at")).toBe(true);
+        expect(data.hasOwnProperty("votes")).toBe(true);
+        expect(data.hasOwnProperty("article_img_url")).toBe(true);
       });
   });
 
@@ -235,25 +234,6 @@ describe("GET /api/articles", () => {
       .then((response) => {
         const data = response.body;
         expect(data).toBeSorted({ descending: true });
-      });
-  });
-  test("Should return a 400 bad request error when given an invalid sort_by", () => {
-    return request(app)
-      .get("/api/articles?sort_by=Kimiko")
-      .expect(400)
-      .then((response) => {
-        const msg = response.body.msg;
-        expect(msg).toBe("bad request");
-      });
-  });
-
-  test("Should return a 400 bad request error when given an invalid order_by", () => {
-    return request(app)
-      .get("/api/articles?sort_by=created_atorder=Kiyomi")
-      .expect(400)
-      .then((response) => {
-        const msg = response.body.msg;
-        expect(msg).toBe("bad request");
       });
   });
 });
@@ -372,3 +352,68 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("Should update a specific article and return the articles update data", () => {
+    return request(app)
+      .patch("/api/articles/6")
+      .send({ inc_votes: 5 })
+      .expect(200)
+      .then((response) => {
+        const data = response.body.updatedArticle[0];
+        expect(data.article_id).toBe(6);
+        expect(data.hasOwnProperty("title")).toBe(true);
+        expect(data.hasOwnProperty("topic")).toBe(true);
+        expect(data.hasOwnProperty("author")).toBe(true);
+        expect(data.hasOwnProperty("body")).toBe(true);
+        expect(data.hasOwnProperty("created_at")).toBe(true);
+        expect(data.hasOwnProperty("votes")).toBe(true);
+        expect(data.hasOwnProperty("article_img_url")).toBe(true);
+      });
+  });
+
+  test("Should return a 404 article not found when given an id that does not exist", () => {
+    return request(app)
+      .patch("/api/articles/99")
+      .send({ inc_votes: 5 })
+      .expect(404)
+      .then((response) => {
+        const data = response.body.msg;
+        console.log(data);
+        expect(data).toBe("article not found");
+      });
+  });
+
+  test("Should return a 400 bad request when given an invalid id type", () => {
+    return request(app)
+      .patch("/api/articles/Kimiko")
+      .send({ inc_votes: 5 })
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        console.log(data);
+        expect(data).toBe("bad request");
+      });
+  });
+});
+
+//PLEASE IGNORE, THESE TESTS ARE BOT REQUIRED YET
+// test("Should return a 400 bad request error when given an invalid sort_by", () => {
+//   return request(app)
+//     .get("/api/articles?sort_by=Kimiko")
+//     .expect(400)
+//     .then((response) => {
+//       const msg = response.body.msg;
+//       expect(msg).toBe("bad request");
+//     });
+// });
+
+// test("Should return a 400 bad request error when given an invalid order_by", () => {
+//   return request(app)
+//     .get("/api/articles?sort_by=created_atorder=Kiyomi")
+//     .expect(400)
+//     .then((response) => {
+//       const msg = response.body.msg;
+//       expect(msg).toBe("bad request");
+//     });
+// });

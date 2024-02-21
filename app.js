@@ -10,6 +10,7 @@ const {
   getAllArticles,
   getAllCommentsByArticleId,
   postNewCommentByArticleId,
+  patchArticle,
 } = require("./controllers/articles.controllers");
 
 const {
@@ -30,6 +31,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getAllCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postNewCommentByArticleId);
+
+app.patch("/api/articles/:article_id", patchArticle);
 
 app.all("/*", invalidEndpoints);
 
