@@ -47,13 +47,18 @@ function getAllCommentsByArticleId(req, res, next) {
 function postNewCommentByArticleId(req, res, next) {
   const articleId = req.params.article_id;
   const newComment = req.body;
-  addNewComment(newComment, articleId)
-    .then((returnedComment) => {
-      res.status(201).send({ returnedComment });
-    })
-    .catch((err) => {
-      next(err);
-    });
+  selectArticleById(articleId).then(() => {
+    addNewComment(newComment, articleId)
+      .then((returnedComment) => {
+        res.status(201).send({ returnedComment });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  })
+  .catch((err) => {
+    next(err);
+  });
 }
 
 function patchArticle(req, res, next) {
