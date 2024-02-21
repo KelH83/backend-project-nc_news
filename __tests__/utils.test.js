@@ -309,17 +309,17 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(data.body).toEqual("Have you ever seen a Lavender corn snake?");
       });
   });
-  test("Should return a 400 bad request if given an article_id that does not exist", () => {
+  test("Should return a 404 not found if given an article_id that does not exist", () => {
     return request(app)
       .post("/api/articles/99/comments")
       .send({
         username: "butter_bridge",
         body: "Have you ever seen a Lavender corn snake?",
       })
-      .expect(400)
+      .expect(404)
       .then((response) => {
         const data = response.body.msg;
-        expect(data).toBe("bad request");
+        expect(data).toBe("article not found");
       });
   });
 
@@ -379,7 +379,6 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(404)
       .then((response) => {
         const data = response.body.msg;
-        console.log(data);
         expect(data).toBe("article not found");
       });
   });
@@ -391,13 +390,12 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(400)
       .then((response) => {
         const data = response.body.msg;
-        console.log(data);
         expect(data).toBe("bad request");
       });
   });
 });
 
-//PLEASE IGNORE, THESE TESTS ARE BOT REQUIRED YET
+//PLEASE IGNORE, THESE TESTS ARE NOT REQUIRED YET
 // test("Should return a 400 bad request error when given an invalid sort_by", () => {
 //   return request(app)
 //     .get("/api/articles?sort_by=Kimiko")
