@@ -15,6 +15,8 @@ const {
 
 const { deleteComment } = require("./controllers/comments.controllers");
 
+const { getAllUsers } = require("./controllers/users.controllers");
+
 const {
   customErrors,
   psqlErrors,
@@ -37,6 +39,8 @@ app.post("/api/articles/:article_id/comments", postNewCommentByArticleId);
 app.patch("/api/articles/:article_id", patchArticle);
 
 app.delete("/api/comments/:comment_id", deleteComment);
+
+app.get("/api/users", getAllUsers);
 
 app.all("/*", invalidEndpoints);
 

@@ -454,6 +454,23 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
+describe("GET /api/users", () => {
+  test("Should return all of the user data", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        const data = response.body.allUsers;
+        expect(data.length).toBe(4);
+        data.forEach((user) => {
+          expect(user.hasOwnProperty("username")).toBe(true);
+          expect(user.hasOwnProperty("name")).toBe(true);
+          expect(user.hasOwnProperty("avatar_url")).toBe(true);
+        });
+      });
+  });
+});
+
 //PLEASE IGNORE, THESE TESTS ARE NOT REQUIRED YET
 // test("Should return a 400 bad request error when given an invalid sort_by", () => {
 //   return request(app)
