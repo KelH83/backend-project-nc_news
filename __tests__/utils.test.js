@@ -471,6 +471,31 @@ describe("GET /api/users", () => {
   });
 });
 
+describe("GET /api/articles?topic=mitch", () => {
+  test("Should return all articles whose topic is mitch", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then((response) => {
+        const data = response.body;
+        expect(data.length).toBe(12);
+        data.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+
+  test("Should return a 404 not found when given a topic that does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=dogs")
+      .expect(404)
+      .then((response) => {
+        const data = response.body;
+        expect(data.msg).toBe("topic not found");
+      });
+  });
+});
+
 //PLEASE IGNORE, THESE TESTS ARE NOT REQUIRED YET
 // test("Should return a 400 bad request error when given an invalid sort_by", () => {
 //   return request(app)
