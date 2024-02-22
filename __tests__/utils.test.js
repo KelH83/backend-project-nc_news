@@ -485,24 +485,3 @@ describe("GET /api/articles?topic=mitch", () => {
       });
   });
 });
-
-//PLEASE IGNORE, THESE TESTS ARE NOT REQUIRED YET
-// test("Should return a 400 bad request error when given an invalid sort_by", () => {
-//   return request(app)
-//     .get("/api/articles?sort_by=Kimiko")
-//     .expect(400)
-//     .then((response) => {
-//       const msg = response.body.msg;
-//       expect(msg).toBe("bad request");
-//     });
-// });
-
-// test("Should return a 400 bad request error when given an invalid order_by", () => {
-//   return request(app)
-//     .get("/api/articles?sort_by=created_atorder=Kiyomi")
-//     .expect(400)
-//     .then((response) => {
-//       const msg = response.body.msg;
-//       expect(msg).toBe("bad request");
-//     });
-// });
