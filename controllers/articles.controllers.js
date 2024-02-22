@@ -20,11 +20,12 @@ function getArticleById(req, res, next) {
 
 function getAllArticles(req, res, next) {
   const { sort_by, order, topic } = req.query;
+  const promises = [
+    selectAllArticles(sort_by, order, topic),
+  ]
   if (topic) {
-    const promises = [
-      selectAllArticles(sort_by, order, topic),
-      selectAllTopics(topic),
-    ];
+    promises.push(selectAllTopics(topic))
+  }
     Promise.all(promises)
       .then((promiseResolutions) => {
         res.status(200).send({ allArticles: promiseResolutions[0] });
@@ -32,15 +33,6 @@ function getAllArticles(req, res, next) {
       .catch((err) => {
         next(err);
       });
-  } else {
-    selectAllArticles(sort_by, order)
-      .then((allArticles) => {
-        res.status(200).send({ allArticles });
-      })
-      .catch((err) => {
-        next(err);
-      });
-  }
 }
 
 function getAllCommentsByArticleId(req, res, next) {
