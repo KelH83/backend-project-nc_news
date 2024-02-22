@@ -455,7 +455,7 @@ describe("DELETE /api/comments/:comment_id", () => {
 });
 
 describe("GET /api/users", () => {
-  test.only("Should return all of the user data", () => {
+  test("Should return all of the user data", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
