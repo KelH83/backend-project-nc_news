@@ -2,19 +2,18 @@ const db = require("../db/connection");
 const format = require("pg-format");
 
 function selectArticleById(articleId) {
-  return db
-    .query(
-      `SELECT * FROM articles
-    WHERE article_id = $1;`,
-      [articleId]
-    )
-    .then((article) => {
-      if (article.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "article not found" });
-      } else {
-        return article.rows[0];
-      }
-    });
+  const queryString = `SELECT articles.*, COUNT(comment_id) AS comment_count FROM comments
+  RIGHT JOIN articles ON articles.article_id = comments.article_id
+  WHERE articles.article_id = $1
+  GROUP BY articles.article_id;`;
+
+  return db.query(queryString, [articleId]).then((article) => {
+    if (article.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "article not found" });
+    } else {
+      return article.rows[0];
+    }
+  });
 }
 
 function selectAllArticles(sort_by = "created_at", order = "DESC", topic) {
