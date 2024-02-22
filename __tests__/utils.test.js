@@ -202,7 +202,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        const data = response.body;
+        const data = response.body.allArticles;
         expect(data.length).toBe(13);
         data.forEach((article) => {
           expect(article.hasOwnProperty("article_id")).toBe(true);
@@ -222,7 +222,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        const data = response.body;
+        const data = response.body.allArticles;
         expect(data).toBeSorted({ descending: true });
       });
   });
@@ -461,13 +461,13 @@ describe("GET /api/users", () => {
   });
 });
 
-describe("GET /api/articles?topic=mitch", () => {
+describe("GET /api/articles?topic=topicname", () => {
   test("Should return all articles whose topic is mitch", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then((response) => {
-        const data = response.body;
+        const data = response.body.allArticles;
         expect(data.length).toBe(12);
         data.forEach((article) => {
           expect(article.topic).toBe("mitch");
@@ -482,6 +482,16 @@ describe("GET /api/articles?topic=mitch", () => {
       .then((response) => {
         const data = response.body;
         expect(data.msg).toBe("topic not found");
+      });
+  });
+
+  test("Should return a 200 and empty array when given a topic that exists but does not have any data associated with it", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        const data = response.body.allArticles;
+        expect(data.length).toBe(0);
       });
   });
 });

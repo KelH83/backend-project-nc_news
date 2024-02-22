@@ -4,6 +4,7 @@ const {
   selectCommentsByArticleId,
   addNewComment,
   updateArticle,
+  selectAllTopics,
 } = require("../models/articles.models");
 
 function getArticleById(req, res, next) {
@@ -19,13 +20,27 @@ function getArticleById(req, res, next) {
 
 function getAllArticles(req, res, next) {
   const { sort_by, order, topic } = req.query;
-  selectAllArticles(sort_by, order, topic)
-    .then((allArticles) => {
-      res.status(200).send(allArticles);
-    })
-    .catch((err) => {
-      next(err);
-    });
+  if (topic) {
+    const promises = [
+      selectAllArticles(sort_by, order, topic),
+      selectAllTopics(topic),
+    ];
+    Promise.all(promises)
+      .then((promiseResolutions) => {
+        res.status(200).send({ allArticles: promiseResolutions[0] });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  } else {
+    selectAllArticles(sort_by, order)
+      .then((allArticles) => {
+        res.status(200).send({ allArticles });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 }
 
 function getAllCommentsByArticleId(req, res, next) {

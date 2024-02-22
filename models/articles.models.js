@@ -35,11 +35,7 @@ function selectAllArticles(sort_by = "created_at", order = "DESC", topic) {
     queryString += ` GROUP BY articles.article_id`;
     queryString += ` ORDER BY ${sort_by} ${order} `;
     return db.query(queryString, queryValues).then((allArticles) => {
-      if (allArticles.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "topic not found" });
-      } else {
-        return allArticles.rows;
-      }
+      return allArticles.rows;
     });
   }
 }
@@ -84,10 +80,23 @@ function updateArticle(articleId, newUpdate) {
   });
 }
 
+function selectAllTopics(topic) {
+  return db
+    .query(`SELECT * FROM topics WHERE slug =$1`, [topic])
+    .then((topicData) => {
+      if (topicData.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "topic not found" });
+      } else {
+        return topicData.rows;
+      }
+    });
+}
+
 module.exports = {
   selectArticleById,
   selectAllArticles,
   selectCommentsByArticleId,
   addNewComment,
   updateArticle,
+  selectAllTopics,
 };
