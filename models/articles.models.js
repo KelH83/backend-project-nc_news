@@ -9,8 +9,7 @@ function selectArticleById(articleId) {
       [articleId]
     )
     .then((article) => {
-      const arrayLength = article.rows.length;
-      if (arrayLength === 0) {
+      if (article.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "article not found" });
       } else {
         return article.rows[0];

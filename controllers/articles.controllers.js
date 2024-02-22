@@ -47,28 +47,29 @@ function getAllCommentsByArticleId(req, res, next) {
 function postNewCommentByArticleId(req, res, next) {
   const articleId = req.params.article_id;
   const newComment = req.body;
-  selectArticleById(articleId).then(() => {
-    addNewComment(newComment, articleId)
-      .then((returnedComment) => {
-        res.status(201).send({ returnedComment });
-      })
-      .catch((err) => {
-        next(err);
-      });
-  })
-  .catch((err) => {
-    next(err);
-  });
+  const promises = [
+    addNewComment(newComment, articleId),
+    selectArticleById(articleId),
+  ];
+  Promise.all(promises)
+    .then((promiseResolutions) => {
+      res.status(201).send({ returnedComment: promiseResolutions[0] });
+    })
+    .catch((err) => {
+      next(err);
+    });
 }
 
 function patchArticle(req, res, next) {
   const articleId = req.params.article_id;
   const newUpdate = req.body;
-  selectArticleById(articleId)
-    .then(() => {
-      updateArticle(articleId, newUpdate).then((updatedArticle) => {
-        res.status(200).send({ updatedArticle });
-      });
+  const promises = [
+    updateArticle(articleId, newUpdate),
+    selectArticleById(articleId),
+  ];
+  Promise.all(promises)
+    .then((promiseResolutions) => {
+      res.status(200).send({ updatedArticle: promiseResolutions[0] });
     })
     .catch((err) => {
       next(err);

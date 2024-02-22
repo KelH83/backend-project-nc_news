@@ -3,7 +3,7 @@ exports.invalidEndpoints = (req, res, next) => {
 };
 
 exports.customErrors = (err, req, res, next) => {
-  if (err.status) {
+  if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
   } else next(err);
 };
@@ -13,13 +13,12 @@ exports.psqlErrors = (err, req, res, next) => {
     err.code === "22P02" ||
     err.code === "42601" ||
     err.code === "42703" ||
-    err.code === "23503"
+    err.code === "23502"
   ) {
     res.status(400).send({ msg: "bad request" });
-  } else if (err.code === "23502") {
-    res
-      .status(400)
-      .send({ msg: "missing data: comment must contain a username & comment" });
+ 
+  }else if (err.code === "23503"){
+    res.status(404).send({ msg: "not found" });
   }
   next(err);
 };

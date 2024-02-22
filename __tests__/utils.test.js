@@ -309,6 +309,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(data.body).toEqual("Have you ever seen a Lavender corn snake?");
       });
   });
+
   test("Should return a 404 not found if given an article_id that does not exist", () => {
     return request(app)
       .post("/api/articles/99/comments")
@@ -319,7 +320,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(404)
       .then((response) => {
         const data = response.body.msg;
-        expect(data).toBe("article not found");
+        expect(data).toBe("not found");
       });
   });
 
@@ -332,9 +333,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(400)
       .then((response) => {
         const data = response.body.msg;
-        expect(data).toBe(
-          "missing data: comment must contain a username & comment"
-        );
+        expect(data).toBe("bad request");
       });
   });
 
@@ -345,10 +344,10 @@ describe("POST /api/articles/:article_id/comments", () => {
         username: "Yuki",
         body: "Have you ever seen a Lavender corn snake?",
       })
-      .expect(400)
+      .expect(404)
       .then((response) => {
         const data = response.body.msg;
-        expect(data).toBe("bad request");
+        expect(data).toBe("not found");
       });
   });
 });
@@ -362,6 +361,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .then((response) => {
         const data = response.body.updatedArticle[0];
         expect(data.article_id).toBe(6);
+        expect(data.votes).toBe(5);
         expect(data.hasOwnProperty("title")).toBe(true);
         expect(data.hasOwnProperty("topic")).toBe(true);
         expect(data.hasOwnProperty("author")).toBe(true);
@@ -393,11 +393,44 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(data).toBe("bad request");
       });
   });
+
+  test("Should return a 400 bad request when passed an incorrect data type", () => {
+    return request(app)
+      .patch("/api/articles/6")
+      .send({ inc_votes: "Twyla" })
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+
+  test("Should return a 400 bad request when nothing is passed in", () => {
+    return request(app)
+      .patch("/api/articles/6")
+      .send()
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+
+  test("Should return a 400 bad request when given no key", () => {
+    return request(app)
+      .patch("/api/articles/6")
+      .send("5")
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
   test("Should delete the comment that corresponds with the comment id", () => {
-    return request(app).delete("/api/comments/2").expect(204);
+    return request(app).delete("/api/comments/1").expect(204);
   });
 
   test("Should respond with a 400 bad request when given an invalid comment id", () => {

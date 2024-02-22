@@ -5,10 +5,10 @@ const {
 
 function deleteComment(req, res, next) {
   const commentId = req.params.comment_id;
-  const promises = [removeComment(commentId), selectCommentById(commentId)];
+  const promises = [selectCommentById(commentId), removeComment(commentId)];
 
   Promise.all(promises)
-    .then((promiseResolutions) => {
+    .then(() => {
       res.status(204).end();
     })
     .catch((err) => {
