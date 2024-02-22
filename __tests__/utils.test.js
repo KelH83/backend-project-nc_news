@@ -395,6 +395,32 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
+describe("DELETE /api/comments/:comment_id", () => {
+  test("Should delete the comment that corresponds with the comment id", () => {
+    return request(app).delete("/api/comments/2").expect(204);
+  });
+
+  test("Should respond with a 400 bad request when given an invalid comment id", () => {
+    return request(app)
+      .delete("/api/comments/Kiyomi")
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+
+  test("Should respond with a 404 not found when given a comment id that does not exist", () => {
+    return request(app)
+      .delete("/api/comments/99")
+      .expect(404)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("comment not found");
+      });
+  });
+});
+
 //PLEASE IGNORE, THESE TESTS ARE NOT REQUIRED YET
 // test("Should return a 400 bad request error when given an invalid sort_by", () => {
 //   return request(app)

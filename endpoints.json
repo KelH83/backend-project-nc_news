@@ -83,5 +83,8 @@
       "votes": 5,
       "comment_count": 6
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes a comment based on the comment id"
   }
 }
