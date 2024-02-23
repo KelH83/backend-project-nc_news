@@ -700,3 +700,15 @@ describe("POST /api/articles", () => {
       });
   });
 });
+
+describe("GET /api/articles?limit=5&&p=2", () => {
+  test("Should retrieve all articles starting at page 2 and limiting the articles to 5", () => {
+    return request(app)
+      .get("/api/articles?limit=5")
+      .expect(200)
+      .then((response) => {
+        const data = response.body.allArticles;
+        expect(data.length).toBe(5);
+      });
+  });
+});

@@ -21,8 +21,8 @@ function getArticleById(req, res, next) {
 }
 
 function getAllArticles(req, res, next) {
-  const { sort_by, order, topic } = req.query;
-  const promises = [selectAllArticles(sort_by, order, topic)];
+  const { sort_by, order, topic, limit, p } = req.query;
+  const promises = [selectAllArticles(sort_by, order, topic, limit, p)];
   if (topic) {
     promises.push(selectAllTopics(topic));
   }
