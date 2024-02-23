@@ -141,5 +141,18 @@
       "article_id": 1,
       "created_at": 1604113380000
     }
+  },
+  "POST /api/articles/": {
+    "description": "Posts a new article and returns the full article data",
+    "exampleResponse": {
+      "article_id": 20,
+      "title": "My 2 cats",
+      "topic": "cats",
+      "author": "icellusedkars",
+      "body": "I have 2 cats, a girl called Twyla and a boy called Midnight. We never refer to him as Midnight we all just call him Mini because he was so tiny when we got him, not so much now, he's a chonky boy! Both cats are moggies, Twyla is black and white and Mini is black with a tiny white patch on his chest. They are in double digits but both are still very active. Twyla's favourite toy is a tennis ball she stole from a neighbour. Mini's not really a fan of toys he prefers playing with the dogs especially his best friend Kimiko, they play fight and chase each other around the house a lot, he particularly enjoys hiding behind doors and jumping on Kimiko when she comes in.",
+      "created_at": 1602828180000,
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      "comment_count": 3
+    }
   }
 }

@@ -5,7 +5,9 @@ const {
   addNewComment,
   updateArticle,
   selectAllTopics,
+  addNewArticle,
 } = require("../models/articles.models");
+const { selectUserById } = require("../models/users.models");
 
 function getArticleById(req, res, next) {
   const articleId = req.params.article_id;
@@ -20,19 +22,17 @@ function getArticleById(req, res, next) {
 
 function getAllArticles(req, res, next) {
   const { sort_by, order, topic } = req.query;
-  const promises = [
-    selectAllArticles(sort_by, order, topic),
-  ]
+  const promises = [selectAllArticles(sort_by, order, topic)];
   if (topic) {
-    promises.push(selectAllTopics(topic))
+    promises.push(selectAllTopics(topic));
   }
-    Promise.all(promises)
-      .then((promiseResolutions) => {
-        res.status(200).send({ allArticles: promiseResolutions[0] });
-      })
-      .catch((err) => {
-        next(err);
-      });
+  Promise.all(promises)
+    .then((promiseResolutions) => {
+      res.status(200).send({ allArticles: promiseResolutions[0] });
+    })
+    .catch((err) => {
+      next(err);
+    });
 }
 
 function getAllCommentsByArticleId(req, res, next) {
@@ -83,10 +83,24 @@ function patchArticle(req, res, next) {
     });
 }
 
+function postNewArticle(req, res, next) {
+  const newArticle = req.body;
+  const username = req.body.author;
+  const promises = [selectUserById(username), addNewArticle(newArticle)];
+  Promise.all(promises)
+    .then((promiseResolutions) => {
+      res.status(201).send({ returnedArticle: promiseResolutions[1] });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getArticleById,
   getAllArticles,
   getAllCommentsByArticleId,
   postNewCommentByArticleId,
   patchArticle,
+  postNewArticle,
 };

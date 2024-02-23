@@ -13,6 +13,7 @@ const {
   getAllCommentsByArticleId,
   postNewCommentByArticleId,
   patchArticle,
+  postNewArticle,
 } = require("./controllers/articles.controllers");
 
 const {
@@ -58,6 +59,8 @@ app.delete("/api/comments/:comment_id", deleteComment);
 app.get("/api/users/:username", getUserById);
 
 app.patch("/api/comments/:comment_id", patchCommentById);
+
+app.post("/api/articles", postNewArticle);
 
 app.all("/*", invalidEndpoints);
 
