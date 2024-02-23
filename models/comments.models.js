@@ -21,4 +21,17 @@ function selectCommentById(commentId) {
     });
 }
 
-module.exports = { removeComment, selectCommentById };
+function patchComment(commentId, votesToAdd) {
+  const votes = votesToAdd.inc_votes;
+  const queryString = `
+  UPDATE comments
+  SET votes = votes + $1
+  WHERE comment_id = $2
+  RETURNING *;`;
+
+  return db.query(queryString, [votes, commentId]).then((updatedComment) => {
+    return updatedComment.rows[0];
+  });
+}
+
+module.exports = { removeComment, selectCommentById, patchComment };

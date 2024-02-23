@@ -540,26 +540,99 @@ describe("GET /api/article?sort_by=??order=??", () => {
   });
 });
 
-describe('GET /api/users/:username', () => {
-  test('Should return all of the data for the requested username', () => {
+describe("GET /api/users/:username", () => {
+  test("Should return all of the data for the requested username", () => {
     return request(app)
       .get("/api/users/butter_bridge")
       .expect(200)
       .then((response) => {
-        const data = response.body.userData
-        expect(data.username).toBe('butter_bridge')
-        expect(data.hasOwnProperty('name')).toBe(true)
-        expect(data.hasOwnProperty('avatar_url')).toBe(true)
+        const data = response.body.userData;
+        expect(data.username).toBe("butter_bridge");
+        expect(data.hasOwnProperty("name")).toBe(true);
+        expect(data.hasOwnProperty("avatar_url")).toBe(true);
       });
   });
 
-  test('Should return a 404 not found when given a user that does not exist', () => {
+  test("Should return a 404 not found when given a user that does not exist", () => {
     return request(app)
       .get("/api/users/Kiyomi")
       .expect(404)
       .then((response) => {
-        const data = response.body
-        expect(data.msg).toBe('not found')
+        const data = response.body;
+        expect(data.msg).toBe("not found");
+      });
+  });
+});
+
+describe("Patch /api/comments/:comment_id", () => {
+  test("should update the specified comment to increase the vote count and then return the updated comment", () => {
+    return request(app)
+      .patch("/api/comments/2")
+      .send({ inc_votes: 10 })
+      .expect(200)
+      .then((response) => {
+        const data = response.body.updatedComment;
+        expect(data.comment_id).toBe(2);
+        expect(data.votes).toBe(24);
+        expect(data.hasOwnProperty("body")).toBe(true);
+        expect(data.hasOwnProperty("author")).toBe(true);
+        expect(data.hasOwnProperty("article_id")).toBe(true);
+        expect(data.hasOwnProperty("created_at")).toBe(true);
+      });
+  });
+
+  test("Should return a 404 article not found when given an id that does not exist", () => {
+    return request(app)
+      .patch("/api/comments/99")
+      .send({ inc_votes: 5 })
+      .expect(404)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("comment not found");
+      });
+  });
+
+  test("Should return a 400 bad request when given an invalid id type", () => {
+    return request(app)
+      .patch("/api/comments/Kimiko")
+      .send({ inc_votes: 5 })
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+
+  test("Should return a 400 bad request when passed an incorrect data type", () => {
+    return request(app)
+      .patch("/api/comments/2")
+      .send({ inc_votes: "Mini" })
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+
+  test("Should return a 400 bad request when nothing is passed in", () => {
+    return request(app)
+      .patch("/api/comments/2")
+      .send()
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+
+  test("Should return a 400 bad request when given no key", () => {
+    return request(app)
+      .patch("/api/comments/2")
+      .send("10")
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
       });
   });
 });
