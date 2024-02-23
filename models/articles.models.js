@@ -17,7 +17,7 @@ function selectArticleById(articleId) {
 }
 
 function selectAllArticles(sort_by = "created_at", order = "DESC", topic) {
-  const validSortBy = ["created_at"];
+  const validSortBy = ["created_at", "title", "topic", "author", "votes"];
   const validOrder = ["ASC", "DESC"];
 
   if (!validSortBy.includes(sort_by) && !validOrder.includes(order)) {

@@ -495,3 +495,47 @@ describe("GET /api/articles?topic=topicname", () => {
       });
   });
 });
+
+describe("GET /api/article?sort_by=??order=??", () => {
+  test("Should take a sort by title and sort and return it in asc order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&&order=ASC")
+      .expect(200)
+      .then((response) => {
+        const data = response.body.allArticles;
+        expect(data.length).toBe(13);
+        expect(data).toBeSortedBy("title", { descending: false });
+      });
+  });
+
+  test("Should take a sort by votes and sort and return it in desc order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&&order=DESC")
+      .expect(200)
+      .then((response) => {
+        const data = response.body.allArticles;
+        expect(data.length).toBe(13);
+        expect(data).toBeSortedBy("votes", { descending: true });
+      });
+  });
+
+  test("Should return a 400 bad request when given an invalid sort by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=Kimiko")
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+
+  test("Should return a 400 bad request when given an invalid order by", () => {
+    return request(app)
+      .get("/api/articles?order=Twyla")
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+});
