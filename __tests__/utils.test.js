@@ -636,3 +636,67 @@ describe("Patch /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  test("Should add a new article to the database and return the new article data", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        title: "My 2 cats",
+        topic: "cats",
+        author: "icellusedkars",
+        body: "I have 2 cats, a girl called Twyla and a boy called Midnight. We never refer to him as Midnight we all just call him Mini because he was so tiny when we got him, not so much now, he's a chonky boy! Both cats are moggies, Twyla is black and white and Mini is black with a tiny white patch on his chest. They are in double digits but both are still very active. Twyla's favourite toy is a tennis ball she stole from a neighbour. Mini's not really a fan of toys he prefers playing with the dogs especially his best friend Kimiko, they play fight and chase each other around the house a lot, he particularly enjoys hiding behind doors and jumping on Kimiko when she comes in.",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(201)
+      .then((response) => {
+        const data = response.body.returnedArticle;
+        expect(data.title).toEqual("My 2 cats");
+        expect(data.topic).toEqual("cats");
+        expect(data.author).toEqual("icellusedkars");
+        expect(data.article_img_url).toEqual(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+        expect(data.hasOwnProperty("body")).toBe(true);
+        expect(data.hasOwnProperty("article_id")).toBe(true);
+        expect(data.hasOwnProperty("votes")).toBe(true);
+        expect(data.hasOwnProperty("created_at")).toBe(true);
+      });
+  });
+
+  test("Should return a 404 not found if given an author(username) that does not exist", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        title: "My 2 cats",
+        topic: "cats",
+        author: "Kiyomi",
+        body: "I have 2 cats, a girl called Twyla and a boy called Midnight. We never refer to him as Midnight we all just call him Mini because he was so tiny when we got him, not so much now, he's a chonky boy! Both cats are moggies, Twyla is black and white and Mini is black with a tiny white patch on his chest. They are in double digits but both are still very active. Twyla's favourite toy is a tennis ball she stole from a neighbour. Mini's not really a fan of toys he prefers playing with the dogs especially his best friend Kimiko, they play fight and chase each other around the house a lot, he particularly enjoys hiding behind doors and jumping on Kimiko when she comes in.",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(404)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("not found");
+      });
+  });
+
+  test("Should return a 400 bad request when required fields are empty", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        title: "My 2 cats",
+        author: "icellusedkars",
+        body: "I have 2 cats, a girl called Twyla and a boy called Midnight. We never refer to him as Midnight we all just call him Mini because he was so tiny when we got him, not so much now, he's a chonky boy! Both cats are moggies, Twyla is black and white and Mini is black with a tiny white patch on his chest. They are in double digits but both are still very active. Twyla's favourite toy is a tennis ball she stole from a neighbour. Mini's not really a fan of toys he prefers playing with the dogs especially his best friend Kimiko, they play fight and chase each other around the house a lot, he particularly enjoys hiding behind doors and jumping on Kimiko when she comes in.",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(400)
+      .then((response) => {
+        const data = response.body.msg;
+        expect(data).toBe("bad request");
+      });
+  });
+});

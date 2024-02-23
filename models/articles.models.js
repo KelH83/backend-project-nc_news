@@ -92,6 +92,28 @@ function selectAllTopics(topic) {
     });
 }
 
+function addNewArticle(newArticle) {
+  const articleToAdd = [
+    newArticle.title,
+    newArticle.topic,
+    newArticle.author,
+    newArticle.body,
+    newArticle.article_img_url,
+  ];
+  const queryString = format(
+    `INSERT INTO articles
+    (title, topic, author, body, article_img_url ) 
+    VALUES 
+    %L
+    RETURNING *;`,
+    [articleToAdd]
+  );
+
+  return db.query(queryString).then((returnedArticle) => {
+    return returnedArticle.rows[0];
+  });
+}
+
 module.exports = {
   selectArticleById,
   selectAllArticles,
@@ -99,4 +121,5 @@ module.exports = {
   addNewComment,
   updateArticle,
   selectAllTopics,
+  addNewArticle,
 };
