@@ -1,8 +1,7 @@
 const express = require("express");
 const app = express();
 app.use(express.json());
-const apiRouter = require('./routers/api-router');
-
+const apiRouter = require("./routers/api-router");
 
 const {
   getAllTopics,
@@ -18,7 +17,7 @@ const {
 
 const { deleteComment } = require("./controllers/comments.controllers");
 
-const { getAllUsers } = require("./controllers/users.controllers");
+const { getAllUsers, getUserById } = require("./controllers/users.controllers");
 
 const {
   customErrors,
@@ -28,10 +27,10 @@ const {
 } = require("./controllers/errors.controllers");
 
 //ROUTERS -------------
- app.get("/api", apiRouter);
- app.get("/api/topics", apiRouter);
+app.get("/api", apiRouter);
+app.get("/api/topics", apiRouter);
 // app.get("/api/articles", apiRouter);
- app.get("/api/users", apiRouter);
+app.get("/api/users", apiRouter);
 
 //------------------------
 
@@ -52,6 +51,8 @@ app.patch("/api/articles/:article_id", patchArticle);
 app.delete("/api/comments/:comment_id", deleteComment);
 
 //app.get("/api/users", getAllUsers);
+
+app.get("/api/users/:username", getUserById);
 
 app.all("/*", invalidEndpoints);
 

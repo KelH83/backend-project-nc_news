@@ -539,3 +539,27 @@ describe("GET /api/article?sort_by=??order=??", () => {
       });
   });
 });
+
+describe('GET /api/users/:username', () => {
+  test('Should return all of the data for the requested username', () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then((response) => {
+        const data = response.body.userData
+        expect(data.username).toBe('butter_bridge')
+        expect(data.hasOwnProperty('name')).toBe(true)
+        expect(data.hasOwnProperty('avatar_url')).toBe(true)
+      });
+  });
+
+  test('Should return a 404 not found when given a user that does not exist', () => {
+    return request(app)
+      .get("/api/users/Kiyomi")
+      .expect(404)
+      .then((response) => {
+        const data = response.body
+        expect(data.msg).toBe('not found')
+      });
+  });
+});
