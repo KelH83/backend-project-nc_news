@@ -15,7 +15,10 @@ const {
   patchArticle,
 } = require("./controllers/articles.controllers");
 
-const { deleteComment } = require("./controllers/comments.controllers");
+const {
+  deleteComment,
+  patchCommentById,
+} = require("./controllers/comments.controllers");
 
 const { getAllUsers, getUserById } = require("./controllers/users.controllers");
 
@@ -53,6 +56,8 @@ app.delete("/api/comments/:comment_id", deleteComment);
 //app.get("/api/users", getAllUsers);
 
 app.get("/api/users/:username", getUserById);
+
+app.patch("/api/comments/:comment_id", patchCommentById);
 
 app.all("/*", invalidEndpoints);
 
